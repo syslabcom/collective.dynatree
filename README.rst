@@ -5,8 +5,10 @@ collective.dynatree provides the basic integration of the jQuery plugin
 `jquery.dynatree.js <http://wwwendt.de/tech/dynatree/index.html>`_ (at 
 `google-code <http://code.google.com/p/dynatree/>`_).
 
-Optional it also provides a full-featured Archetypes Widget with full 
-ATVocabularyManager support, including hierachical VDEX-vocabularies.
+Optionally it also provides full-featured Archetypes and z3c.form Widgets. 
+
+The Archetypes widget comes with full ATVocabularyManager support, including hierachical VDEX-vocabularies.
+The z3c.form widget uses the TreeVocabulary from zope.schema (>= 4.1).
 
 .. image:: http://bluedynamics.com/collective.dynatree.png
 
@@ -41,11 +43,11 @@ Example
 -------
 ::
 
-    StringField('single_leafs',
+    StringField('single_leaves',
         required=0,
         vocabulary=NamedVocabulary('some_atvm_tree_vocabulary'),
         widget=DynatreeWidget(
-            description="Select one option of tree. Only leafs allowed",
+            description="Select one option of tree. Only leaves allowed",
             leafsOnly=True,
             selectMode=1),
     ),
@@ -58,7 +60,46 @@ Example
             selectMode=3,
             minExpandLevel=2),
     ),
+
+
+---------------
+z3c.form Widget
+---------------
+
+Because the dynatree requires a vocabulary, you need to use a
+zope.schema.Choice field.
+
+Example
+-------
+You need to import the following at the top:
+
+::
+
+    import zope.schema
+    from plone.directives import form
+
+And then in your schema definition:
+
+::
+
+    vocab = zope.schema.vocabulary.TreeVocabulary.fromDict(
+                { ('earth', 'Earth'): {
+                    ('africa', 'Africa') : {},
+                    ('europe', 'Europe'): {},
+                    ('north-america', 'North America'): {},
+                    ('south-america', 'South America'): {},
+                    ('asia', 'Asia'): {},
+                    ('australia', 'Australia'): {},
+                  ('mars', 'Mars'): {},
+                })
+
+    foo = zope.schema.Choice(
+            title=_(u'label_foo', default=u'Foo'),
+            vocabulary=vocab,
+        )
+    form.widget(foo='collective.dynatree.widget.DynatreeFieldWidget')
     
+
 Widget Parameters 
 -----------------
 (additional to the usal suspects of TypesWidget)
@@ -90,10 +131,11 @@ showKey
 Example-ContentType
 -------------------
 
-An example ContentType is provided, but disabled by default. To enable it add
+An example Achetypes ContentType is provided, but disabled by default. To enable it add
 ``collective.dynatree[example]`` to both, the eggs and zcml section in your 
 buildout. Rerun buildout, restart Plone and install the 
 ``jquery.dynatree EXAMPLE Content Types`` as an add-on product.  
+
 
 Source Code and Contributions
 =============================
