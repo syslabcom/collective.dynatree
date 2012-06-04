@@ -54,5 +54,5 @@ def lookupVocabulary(context, field):
         vocab = field.Vocabulary(context)
         tree = OrderedDict()
         for key in vocab:
-            tree[key] = vocab.getValue(key)
+            tree[key] = (vocab.getValue(key), None)
         return tree
