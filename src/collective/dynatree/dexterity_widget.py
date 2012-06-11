@@ -24,6 +24,7 @@ class DynatreeWidget(z3c.form.browser.widget.HTMLInputWidget,
     autoCollapse = False
     leafsOnly = True
     showKey = False
+    overlay = False
     atvocabulary = None
 
     @property

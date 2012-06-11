@@ -40,7 +40,8 @@
                 <div class="dynatree_filter">
                   <input type="text" class="filter" />
                 </div>
-                <div class="collective-dynatree-tree">Tree</div>
+                <div class="collective-dynatree-tree" id="#"
+                    tal:attributes="id string:tree_${fieldName}">Tree</div>
                 <div class="dynatree_ajax_vocabulary hiddenStructure" 
                      tal:content="string:${context_url}/@@at_widget_dynatree_json?fieldname=${fieldName}" />
                 <div class="dynatree_parameters hiddenStructure" 
@@ -57,6 +58,8 @@
 	               />
                 <div class="ui_controls">
                   <div class="sparse">Sparse</div>
+                  <div class="treepopup" rel="#tree..." style="display: None"
+                      tal:attributes="rel string:#tree_${fieldName}" i18n:translate="">Open</div>
                 </div>
               </div>
 	  </metal:use>

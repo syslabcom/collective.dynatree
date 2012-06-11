@@ -37,7 +37,7 @@ class ATFieldVocabDynatreeJsonView(BrowserView):
 class DynatreeWidget(TypesWidget):
 
     _properties = TypesWidget._properties.copy()
-    _properties.update({  # 1=single, 2=multi, 3=multi-hier(?)
+    _properties.update({  # 1=single, 2=multi, 3=multi-tier(?)
         'macro': 'at_widget_dynatree',
         'selectMode': 1,
         'minExpandLevel': 0,
@@ -48,6 +48,7 @@ class DynatreeWidget(TypesWidget):
         'filter': True,
         'flatlist': False,
         'showKey': False,
+        'overlay': False
         })
 
     security = ClassSecurityInfo()
@@ -66,6 +67,7 @@ class DynatreeWidget(TypesWidget):
             'autoCollapse',
             'sparse',
             'flatlist',
+            'overlay',
             ]]
         result.append('title,%s' % self.label)
         return '/'.join(result)
