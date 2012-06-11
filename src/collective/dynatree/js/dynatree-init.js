@@ -1,5 +1,40 @@
 /*jslint nomen: true */
 /*global jQuery, _, Backbone, document */
+/*
+This is a lot of code.
+To understand it, one should understand Backbone and/or MVC a bit.
+A short summary:
+We create a DataModel Object. It knows what the tree contains, what options
+there are and what everybody may display.
+Then there are a number of View objects.
+Each view object represents a part of the information from the model to the
+user. FlatList represents the selected options, Dynatree options all.
+Here is an example of how things work together:
+In the initialization, we extract options from the form and create a
+DataModel Instance.
+Then we initialize an instance of each View, for some views we do this
+conditionally, because they are optional.
+Upon initalization, each view receives the DataModel as a `model`
+Each view registers itself on some events on the model.
+For this to work, it is important, not to change attributes in the model
+directly, but with setters.
+This is why the Dynatree widget defines a custom onQuerySelect handler,
+which gets called when somebody wants to select an option, before the
+js.dynatree updates its state.
+
+Imagine we'd have a dynatree set up, the sparse button is activated.
+
+Now when somebody clicks on "sparse", the event is handled in 
+VariousUIElements.toggleSparse.
+This method updates the sparse attribute on the model via set()
+Backbone automatically emits some events, the dynatree view registered itself
+to this event. It registered its render method.
+This gets called, and does a number of things. At the end, it sees that there
+is already a dynatree, so it sets the children upon the dynatree and calls
+the update method of the tree. The children it got from the model, and because
+now a sparse flag is set, the model only returns selected nodes. The tree
+from now on does not know any longer that there are more nodes.
+*/
 (function ($) {
     "use strict"; /*jslint regexp: true */
     _.templateSettings = {
@@ -7,6 +42,10 @@
     }; /*jslint regexp: false */
 
     var DataModel = Backbone.Model.extend({
+        /* 
+        The DataModel represents the complete tree data independent of its
+        representation and all options and states of the different views
+        */
         initialize: function () {
             function change_params(model, params) {
                 var real_params = {};
@@ -30,11 +69,8 @@
                     silent: true
                 });
             }
-
             _.bindAll(this, "update", "update_selected", "getDataFor");
-
             this.bind("change:params", change_params);
-
             this.trigger("change:params", this, this.get("params"));
             $.get(this.get("url"), this.update);
         },
@@ -42,6 +78,9 @@
             sparse: false
         },
         update_selected: function (selected) {
+            /*
+            set the selected elements of the tree to `selected`
+            */
             if (this.get("params").selectMode === 1) { // Single Select
                 selected = [_.last(selected)];
             }
@@ -50,6 +89,9 @@
             });
         },
         update: function (result) {
+            /*
+            Update the tree based on the JSON data contained in `result`
+            */
             var new_children = JSON.parse(result),
                 new_selected = this.validateSelected(new_children);
             this.set({
@@ -69,26 +111,47 @@
             return _.intersection(keys, this.get("selected"));
         },
         getChildren: function () {
+            /*
+            Get the children information as required by the dynatree
+            Prefiltered according to settings like filter and sparse options
+            */
             var selected = this.get("selected"),
                 filter = this.get("filter") && this.get("filter").toLowerCase(),
                 sparse_cache = {},
+                count_cache = {},
                 retval = this.get("children");
 
             function map_no_false(elems, filter) {
                 return _.without(_.map(elems, filter), false);
             }
 
-            function is_selected_or_has_selected_children(node) {
+            function count_children(node) {
+                if (count_cache[node.key] !== undefined) {
+                    return count_cache[node.key];
+                }
+                var count = node.children.length;
+                _.each(node.children, function (node) {
+                    count += count_children(node);
+                });
+                count_cache[node.key] = count;
+                console.log(node.key +' ' + count)
+                return count;
+            }
+
+            function is_selected_or_has_selected_children_or_few(node, few_limit) {
+                if (few_limit === undefined) {
+                    few_limit = 0;
+                }
                 if (sparse_cache[node.key] !== undefined) {
                     return sparse_cache[node.key];
                 }
 
                 function detect1(selected_key) {
-                    return selected_key === node.key;
+                    return selected_key === node.key || (count_children(node) <= few_limit);
                 }
 
                 function detect2(child) {
-                    return is_selected_or_has_selected_children(child);
+                    return is_selected_or_has_selected_children_or_few(child, few_limit);
                 }
                 if (_.detect(selected, detect1)) {
                     sparse_cache[node.key] = true;
@@ -104,7 +167,7 @@
             }
 
             function remove_unselected(node) {
-                if (!is_selected_or_has_selected_children(node)) {
+                if (!is_selected_or_has_selected_children_or_few(node)) {
                     return false;
                 }
                 var retval = _.clone(node);
@@ -114,7 +177,7 @@
 
             function remove_non_matching(node) {
                 var retval = _.clone(node);
-                if (!is_selected_or_has_selected_children(node)) {
+                if (!is_selected_or_has_selected_children_or_few(node)) {
                     if (node.title.toLowerCase().indexOf(filter) !== -1) {
                         return retval;
                     } else {
@@ -130,14 +193,23 @@
                 return retval;
             }
 
-            function show_selected(node) {
+            function show_selected_or_few(node, few_limit) {
+                if (few_limit === undefined) {
+                    few_limit = 3;
+                }
+
                 function detect(child) {
-                    return is_selected_or_has_selected_children(child);
+                    return is_selected_or_has_selected_children_or_few(child, few_limit);
+                }
+                if(count_children(node) <= few_limit){
+                    node.expand = true;
                 }
                 if (_.detect(node.children, detect)) {
                     node.expand = true;
                 }
-                _.each(node.children, show_selected);
+                _.each(node.children, function (node) {
+                    show_selected_or_few(node, few_limit);
+                });
             }
             if (this.get("sparse")) {
                 retval = map_no_false(retval, remove_unselected);
@@ -145,10 +217,13 @@
             if (this.get("filter")) {
                 retval = map_no_false(retval, remove_non_matching);
             }
-            _.each(retval, show_selected);
+            _.each(retval, show_selected_or_few);
             return retval;
         },
         getDataFor: function (key) {
+            /*
+            Get information for a specific child node, identified by `key`
+            */
             function getDataFromChildren(key, children) {
                 var retval;
                 _.detect(children, function (child) {
@@ -170,6 +245,9 @@
         }
     }),
         Dynatree = Backbone.View.extend({
+            /*
+            Represents the tree as a dynatree
+            */
             initialize: function () {
                 _.bindAll(this, "render");
                 if (this.model.get("params").overlay) {
@@ -218,6 +296,10 @@
             }
         }),
         HiddenForm = Backbone.View.extend({
+            /*
+            Represents the Tree as a hidden form, ready to be parsed
+            in plone
+            */
             initialize: function () {
                 _.bindAll(this, "render");
                 this.model.bind("change:selected", this.render);
@@ -233,6 +315,9 @@
             }
         }),
         Filter = Backbone.View.extend({
+            /*
+            Represents the filter.
+            */
             initialize: function () {
                 _.bindAll(this, 'updateFilter', 'render');
                 this.model.bind("change:filter", this.render);
@@ -258,6 +343,9 @@
 
         }),
         VariousUIElements = Backbone.View.extend({
+            /*
+            Represents some buttons with limited functionality
+            */
             initialize: function () {
                 _.bindAll(this, "toggleSparse", "render");
                 this.model.bind("change:sparse", this.render);
@@ -286,6 +374,9 @@
             }
         }),
         FlatListDisplay = Backbone.View.extend({
+            /*
+            Represents the tree as a flat list, safes space
+            */
             initialize: function () {
                 _.bindAll(this, "render", "delete_elem");
                 this.template = _.template(this.el.find(".flatlist-template").html());
@@ -344,7 +435,6 @@
 
     $(document).ready(function () {
         $('.dynatree-atwidget').each(function () {
-            // get parameters 
             var tree, hiddeninput, filter, various, flatlist, jqthis = $(this),
                 datamodel = new DataModel({
                     url: jqthis.find(".dynatree_ajax_vocabulary").text(),
