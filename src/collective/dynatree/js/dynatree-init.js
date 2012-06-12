@@ -119,7 +119,7 @@ from now on does not know any longer that there are more nodes.
                 filter = this.get("filter") && this.get("filter").toLowerCase(),
                 sparse_cache = {},
                 count_cache = {},
-                retval = this.get("children");
+                few_limit, retval = this.get("children");
 
             function map_no_false(elems, filter) {
                 return _.without(_.map(elems, filter), false);
@@ -134,13 +134,12 @@ from now on does not know any longer that there are more nodes.
                     count += count_children(node);
                 });
                 count_cache[node.key] = count;
-                console.log(node.key +' ' + count)
                 return count;
             }
 
             function is_selected_or_has_selected_children_or_few(node, few_limit) {
                 if (few_limit === undefined) {
-                    few_limit = 0;
+                    few_limit = -1;
                 }
                 if (sparse_cache[node.key] !== undefined) {
                     return sparse_cache[node.key];
@@ -195,13 +194,13 @@ from now on does not know any longer that there are more nodes.
 
             function show_selected_or_few(node, few_limit) {
                 if (few_limit === undefined) {
-                    few_limit = 3;
+                    few_limit = -1;
                 }
 
                 function detect(child) {
                     return is_selected_or_has_selected_children_or_few(child, few_limit);
                 }
-                if(count_children(node) <= few_limit){
+                if (count_children(node) <= few_limit && count_children(node)) {
                     node.expand = true;
                 }
                 if (_.detect(node.children, detect)) {
@@ -216,8 +215,12 @@ from now on does not know any longer that there are more nodes.
             }
             if (this.get("filter")) {
                 retval = map_no_false(retval, remove_non_matching);
+                count_cache = {};
+                few_limit = 3;
             }
-            _.each(retval, show_selected_or_few);
+            _.each(retval, function (node) {
+                show_selected_or_few(node, few_limit);
+            });
             return retval;
         },
         getDataFor: function (key) {
