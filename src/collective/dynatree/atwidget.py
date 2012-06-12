@@ -66,6 +66,7 @@ class DynatreeWidget(TypesWidget):
             'rootVisible',
             'autoCollapse',
             'sparse',
+            'filter',
             'flatlist',
             'overlay',
             ]]
