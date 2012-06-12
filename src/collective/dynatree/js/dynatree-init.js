@@ -119,7 +119,8 @@ from now on does not know any longer that there are more nodes.
                 filter = this.get("filter") && this.get("filter").toLowerCase(),
                 sparse_cache = {},
                 count_cache = {},
-                few_limit, retval = this.get("children");
+                retval = this.get("children"),
+                few_limit;
 
             function map_no_false(elems, filter) {
                 return _.without(_.map(elems, filter), false);
@@ -253,9 +254,6 @@ from now on does not know any longer that there are more nodes.
             */
             initialize: function () {
                 _.bindAll(this, "render");
-                if (this.model.get("params").overlay) {
-                    this.el.hide();
-                }
                 this.model.bind("change:children", this.render);
                 this.model.bind("change:selected", this.render);
                 this.model.bind("change:sparse", this.render);
@@ -345,6 +343,19 @@ from now on does not know any longer that there are more nodes.
             }
 
         }),
+        OverlayElement = Backbone.View.extend({
+            initialize: function () {
+                this.el.overlay({
+                    mask: {
+                        color: '#ebecff',
+                        loadSpeed: 200,
+                        opacity: 0.9
+                    }
+                });
+            }
+
+        }),
+
         VariousUIElements = Backbone.View.extend({
             /*
             Represents some buttons with limited functionality
@@ -352,9 +363,6 @@ from now on does not know any longer that there are more nodes.
             initialize: function () {
                 _.bindAll(this, "toggleSparse", "render");
                 this.model.bind("change:sparse", this.render);
-                if (this.model.get('params').overlay) {
-                    this.el.find(".treepopup").show().overlay();
-                }
                 this.render();
             },
             events: {
@@ -438,7 +446,7 @@ from now on does not know any longer that there are more nodes.
 
     $(document).ready(function () {
         $('.dynatree-atwidget').each(function () {
-            var tree, hiddeninput, filter, various, flatlist, jqthis = $(this),
+            var tree, hiddeninput, filter, various, flatlist, overlay, jqthis = $(this),
                 datamodel = new DataModel({
                     url: jqthis.find(".dynatree_ajax_vocabulary").text(),
                     selected: _.filter(jqthis.find('input.selected').val().split('|'), function (elem) {
@@ -472,6 +480,12 @@ from now on does not know any longer that there are more nodes.
             if (datamodel.get("params").flatlist) {
                 flatlist = new FlatListDisplay({
                     el: jqthis.find(".flatlist_container"),
+                    model: datamodel
+                });
+            }
+            if (datamodel.get("params").overlay) {
+                overlay = new OverlayElement({
+                    el: jqthis.find(".treepopup"),
                     model: datamodel
                 });
             }

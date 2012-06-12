@@ -37,30 +37,36 @@
                     <div class="flatlist-item" key="{{ key }}"><span class="delete">X</span>&nbsp;{{ title }}</div>
                   </div>
                 </div>
-                <div class="dynatree_filter">
-                  <input type="text" class="filter" />
+                <div class="overlay" id="#"
+                  tal:attributes="id string:overlay_${fieldName}" tal:omit-tag="not: widget/overlay">
+                  <div class="close" tal:condition="widget/overlay"><span>Close</span></div>
+                  <div class="dynatree_filter">
+                    <input type="text" class="filter" />
+                  </div>
+                  <div class="collective-dynatree-tree" id="#"
+                      tal:attributes="id string:tree_${fieldName}">Tree</div>
+                  <div class="dynatree_ajax_vocabulary hiddenStructure" 
+                      tal:content=" string:${context_url}/@@at_widget_dynatree_json?fieldname=${fieldName}" />
+                  <div class="dynatree_parameters hiddenStructure" 
+                      tal:content="python:widget.dynatreeParameters(context, field)+'/checkbox,True'" />
+	                <input type="hidden"
+                         class="hiddeninput selected"
+	                       name=""
+	                       id=""
+	                       value=""
+				                 size="120"
+	                       tal:attributes="name fieldName;
+	                                       id fieldName;
+        	                               value python:widget.dynatreeValue(value);"
+	                />
+                  <div class="ui_controls">
+                    <div class="sparse" tal:condition="widget/sparse">Sparse</div>
+                  </div>
                 </div>
-                <div class="collective-dynatree-tree" id="#"
-                    tal:attributes="id string:tree_${fieldName}">Tree</div>
-                <div class="dynatree_ajax_vocabulary hiddenStructure" 
-                     tal:content="string:${context_url}/@@at_widget_dynatree_json?fieldname=${fieldName}" />
-                <div class="dynatree_parameters hiddenStructure" 
-                     tal:content="python:widget.dynatreeParameters(context, field)+'/checkbox,True'" />
-	        <input type="hidden"
-                       class="hiddeninput selected"
-	               name=""
-	               id=""
-	               value=""
-				   size="120"
-	               tal:attributes="name fieldName;
-	                               id fieldName;
-	                               value python:widget.dynatreeValue(value);"
-	               />
-                <div class="ui_controls">
-                  <div class="sparse">Sparse</div>
-                  <div class="treepopup" rel="#tree..." style="display: None"
-                      tal:attributes="rel string:#tree_${fieldName}" i18n:translate="">Open</div>
-                </div>
+                <div class="treepopup" rel="#tree..."
+                    tal:condition="widget/overlay"
+                    tal:attributes="rel string:#overlay_${fieldName}" i18n:translate="">Open<p></p></div>
+
               </div>
 	  </metal:use>
 	</metal:macro>
