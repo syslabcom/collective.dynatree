@@ -67,7 +67,7 @@
                 </div>
                 <div class="treepopup" rel="#tree..."
                     tal:condition="widget/overlay"
-                    tal:attributes="rel string:#overlay_${fieldName}" i18n:translate="">Open<p></p></div>
+                    tal:attributes="rel string:#overlay_${fieldName}" i18n:translate="">Open</div>
 
               </div>
 	  </metal:use>
