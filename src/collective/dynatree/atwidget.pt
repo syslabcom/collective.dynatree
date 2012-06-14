@@ -39,6 +39,8 @@
                 </div>
                 <div class="overlay" id="#"
                   tal:attributes="id string:overlay_${fieldName}" tal:omit-tag="not: widget/overlay">
+                  <h2 tal:content="widget/label">Label</h2>
+                  <div class="formHelp" tal:content="widget/description">Form help</div> 
                   <div class="close" tal:condition="widget/overlay"><span>Close</span></div>
                   <div class="dynatree_filter">
                     <input type="text" class="filter" />
