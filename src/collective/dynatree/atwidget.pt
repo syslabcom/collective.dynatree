@@ -34,7 +34,7 @@
 		       class="dynatree-atwidget">
                 <div class="flatlist_container">
                   <div class="flatlist-template">
-                    <div class="flatlist-item" key="{{ key }}"><span class="delete">X</span>&nbsp;{{ title }}</div>
+                    <div class="flatlist-item" key="{{ key }}"><span class="delete"><span>X</span></span>&nbsp;{{ title }}</div>
                   </div>
                 </div>
                 <div class="overlay" id="#"
