@@ -176,9 +176,17 @@ from now on does not know any longer that there are more nodes.
             }
 
             function remove_non_matching(node) {
-                var retval = _.clone(node);
+                var retval = _.clone(node),
+                    match = node.title.toLowerCase().indexOf(filter) !== -1;
+                if (match) {
+                    retval.addClass = 'filtermatch';
+
+                } else {
+                    retval.addClass = '';
+
+                }
                 if (!is_selected_or_has_selected_children_or_few(node)) {
-                    if (node.title.toLowerCase().indexOf(filter) !== -1) {
+                    if (match) {
                         return retval;
                     } else {
                         retval.children = map_no_false(retval.children, remove_non_matching);
