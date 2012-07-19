@@ -82,7 +82,11 @@ from now on does not know any longer that there are more nodes.
             set the selected elements of the tree to `selected`
             */
             if (this.get("params").selectMode === 1) { // Single Select
-                selected = [_.last(selected)];
+                if (selected.length) {
+                    selected = [_.last(selected)];
+                } else {
+                    selected = [];
+                }
             }
             this.set({
                 selected: selected
@@ -109,6 +113,27 @@ from now on does not know any longer that there are more nodes.
             }
             var keys = _.flatten(_.map(new_children, get_keys));
             return _.intersection(keys, this.get("selected"));
+        },
+        reset: function () {
+            var children = this.get("children");
+            this.set({
+                sparse: false,
+                filter: ''
+            });
+
+            function unexpand(node) {
+                _.each(node.children, unexpand);
+                node.expand = false;
+            }
+            _.each(children, unexpand);
+            this.set({
+                sparse: false,
+                filter: '',
+                children: children
+            });
+
+
+
         },
         getChildren: function () {
             /*
@@ -353,11 +378,15 @@ from now on does not know any longer that there are more nodes.
         }),
         OverlayElement = Backbone.View.extend({
             initialize: function () {
+                var model = this.model;
                 this.el.overlay({
                     mask: {
                         color: '#ebecff',
                         loadSpeed: 200,
                         opacity: 0.9
+                    },
+                    onBeforeLoad: function () {
+                        model.reset();
                     }
                 });
             }

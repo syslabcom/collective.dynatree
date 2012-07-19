@@ -441,3 +441,7 @@ span.custom1 a
 .filtermatch {
 	/* Add a pony */
 }
+
+.flatlist-template {
+	display: None;
+}
