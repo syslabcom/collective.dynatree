@@ -2,13 +2,31 @@
 	"folders":
 	[
 		{
-			"path": ".",
-			"folder_exclude_patterns": ["src", "bin", "develop-eggs", "eggs", "include", "lib", "local", "parts", "var"],
-			"file_exclude_patterns": [".*", "*sublime*"]
+			"file_exclude_patterns":
+			[
+				".*",
+				"*sublime*"
+			],
+			"folder_exclude_patterns":
+			[
+				"src",
+				"bin",
+				"develop-eggs",
+				"eggs",
+				"include",
+				"lib",
+				"local",
+				"parts",
+				"var"
+			],
+			"path": "./"
 		},
 		{
-			"path": "src",
-			"folder_exclude_patterns": ["*.egg-info"]
+			"folder_exclude_patterns":
+			[
+				"*.egg-info"
+			],
+			"path": "src"
 		}
 	]
 }
