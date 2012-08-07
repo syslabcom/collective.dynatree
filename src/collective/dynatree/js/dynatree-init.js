@@ -156,9 +156,9 @@ from now on does not know any longer that there are more nodes.
                     return count_cache[node.key];
                 }
                 var count = node.children.length;
-                _.each(node.children, function (node) {
-                    count += count_children(node);
-                });
+                //_.each(node.children, function (node) {
+                //    count += count_children(node);
+                //});
                 count_cache[node.key] = count;
                 return count;
             }
