@@ -55,5 +55,6 @@ class FieldVocabDynatreeJsonView(BrowserView):
         # elsewhere, which doesn't seem to be the case...
 
         selected = self.request.get('selected', '').split('|')
-        return JSONWriter().write(dict2dynatree(tree, selected, True,
-                                  False))
+        leafsOnly = self.request.get('leafsOnly', True)
+        showKey = self.request.get('showKey', False)
+        return JSONWriter().write(dict2dynatree(tree, selected, leafsOnly, showKey))

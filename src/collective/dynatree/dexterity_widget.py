@@ -43,7 +43,7 @@ class DynatreeWidget(z3c.form.browser.widget.HTMLInputWidget,
     def dynatree_parameters(self):
         result = ['%s,%s' % (parameter, getattr(self, parameter))
                   for parameter in ['selectMode', 'minExpandLevel',
-                  'rootVisible', 'autoCollapse']]
+                  'rootVisible', 'autoCollapse', 'leafsOnly', 'showKey', 'overlay']]
         result.append('title,%s' % self.label)
         return '/'.join(result)
 
