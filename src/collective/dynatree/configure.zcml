@@ -41,7 +41,7 @@
     />   
 
     <include package="plone.z3cform" />
-    <class zcml:condition="installed plone.behavior" class=".widget.DynatreeWidget">
+    <class zcml:condition="installed plone.behavior" class=".dexterity_widget.DynatreeWidget">
         <require permission="zope.Public"
                  interface=".interfaces.IDynatreeWidget" />
     </class>
