@@ -7,3 +7,5 @@
 * Hide the flatlist template [do3cc]
 * Fix an issue with single select dynatrees. Unselecting on option triggered
   an error [do3cc]
+* Fix: unselecting all previously selected items and saving resulted
+  in no change [deroiste]
