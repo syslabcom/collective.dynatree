@@ -1,0 +1,32 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				".*",
+				"*sublime*"
+			],
+			"folder_exclude_patterns":
+			[
+				"src",
+				"bin",
+				"develop-eggs",
+				"eggs",
+				"include",
+				"lib",
+				"local",
+				"parts",
+				"var"
+			],
+			"path": "./"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"*.egg-info"
+			],
+			"path": "src"
+		}
+	]
+}

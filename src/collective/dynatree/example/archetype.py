@@ -11,6 +11,7 @@ schema = BaseSchema + Schema((
         widget=DynatreeWidget(
             description="Select one option of tree. Only leafs allowed",
             leafsOnly=True,
+            overlay=True,
             selectMode=1),
     ),
     StringField('single_all',

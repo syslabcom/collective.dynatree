@@ -4,6 +4,7 @@ import os
 version = "1.4dev"
 shortdesc = 'jquery.dynatree.js integration for Plone'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
+longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 
 setup(name='collective.dynatree',

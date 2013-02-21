@@ -126,6 +126,11 @@ showKey
    string like ``"%s: %s"``; default=None. You can put HTML inside, ie. 
    ``<span class="dynatree-key">%s</span>&ndash;<span class="dynatree-value">%s<span>``.
    Thus you can apply custom formats.
+
+overlay
+    Open the dynatree in an overlay. This is not implemented with ajax.
+    Instead the normal tree is hidden and then displayed via
+    standard overlay of jquery tools, so theme it accordingly.
               
 -------------------
 Example-ContentType

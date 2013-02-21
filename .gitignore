@@ -10,3 +10,9 @@ src/*.egg-info
 .pydevproject
 .tmp*
 dist
+collective_dynatree.sublime-workspace
+include/
+lib/
+local/
+src/zope.schema/
+*.swp

@@ -3,6 +3,7 @@
  xmlns:z3c="http://namespaces.zope.org/z3c"
  xmlns:browser="http://namespaces.zope.org/browser"
  xmlns:i18n="http://namespaces.zope.org/i18n"
+ xmlns:zcml="http://namespaces.zope.org/zcml"
  xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
  i18n_domain="collective.dynatree">
 
@@ -40,12 +41,12 @@
     />   
 
     <include package="plone.z3cform" />
-    <class class=".widget.DynatreeWidget">
+    <class zcml:condition="installed plone.behavior" class=".dexterity_widget.DynatreeWidget">
         <require permission="zope.Public"
                  interface=".interfaces.IDynatreeWidget" />
     </class>
 
-    <z3c:widgetTemplate
+    <z3c:widgetTemplate zcml:condition="installed plone.behavior"
         mode="input"
         widget=".interfaces.IDynatreeWidget"        
         layer="z3c.form.interfaces.IFormLayer"
@@ -53,6 +54,7 @@
         />
 
     <browser:page
+        zcml:condition="installed plone.behavior"
         for="*"
         name="widget_dynatree_json"
         permission="zope2.View"
