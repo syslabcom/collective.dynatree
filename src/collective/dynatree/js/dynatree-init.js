@@ -339,7 +339,7 @@ from now on does not know any longer that there are more nodes.
                 this.model.bind("change:selected", this.render);
             },
             render: function () {
-                var val = "";
+                var val = "noValueSelected";
                 if (this.model.get("selected").length) {
                     val = _.reduce(this.model.get("selected"), function (a, b) {
                         return a + '|' + b;
