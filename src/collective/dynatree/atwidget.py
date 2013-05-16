@@ -129,6 +129,8 @@ class DynatreeWidget(TypesWidget):
             return empty_marker
         if value == '()':
             return empty_marker
+        if type(value) == list:
+            value = "|".join(value)
         value = value.strip('|')
         if self.selectMode > 1:
             value = [_ for _ in value.split('|') if _.strip()]
